@@ -2,7 +2,7 @@ class Bet < ActiveRecord::Base
     belongs_to :user
     belongs_to :game
 
-    attr_reader :status
+    
 
     def edit_amount(new_bet_amt)
         if game.started
