@@ -6,6 +6,6 @@ class User < ActiveRecord::Base
       self.balance ||= 10000000
     end
 
-    
+
 
 end
