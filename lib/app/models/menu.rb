@@ -6,7 +6,16 @@ class Menu
   end
 
   def welcome
-    puts "Welcome to the game"
+    puts "Welcome to:"
+    puts "
+    ██████╗ ██╗ ██████╗     ███╗   ███╗ ██████╗ ███╗   ██╗███████╗██╗   ██╗    ███████╗██████╗  ██████╗ ██████╗ ████████╗███████╗
+    ██╔══██╗██║██╔════╝     ████╗ ████║██╔═══██╗████╗  ██║██╔════╝╚██╗ ██╔╝    ██╔════╝██╔══██╗██╔═══██╗██╔══██╗╚══██╔══╝██╔════╝
+    ██████╔╝██║██║  ███╗    ██╔████╔██║██║   ██║██╔██╗ ██║█████╗   ╚████╔╝     ███████╗██████╔╝██║   ██║██████╔╝   ██║   ███████╗
+    ██╔══██╗██║██║   ██║    ██║╚██╔╝██║██║   ██║██║╚██╗██║██╔══╝    ╚██╔╝      ╚════██║██╔═══╝ ██║   ██║██╔══██╗   ██║   ╚════██║
+    ██████╔╝██║╚██████╔╝    ██║ ╚═╝ ██║╚██████╔╝██║ ╚████║███████╗   ██║       ███████║██║     ╚██████╔╝██║  ██║   ██║   ███████║
+    ╚═════╝ ╚═╝ ╚═════╝     ╚═╝     ╚═╝ ╚═════╝ ╚═╝  ╚═══╝╚══════╝   ╚═╝       ╚══════╝╚═╝      ╚═════╝ ╚═╝  ╚═╝   ╚═╝   ╚══════╝
+                                                                                                                                 
+    ".colorize(:light_green)
     puts "Do you have an existing account? (Y/N)"
 
     input = gets.chomp
@@ -27,19 +36,23 @@ class Menu
 
   def login
     puts "Enter your username: "
-    input =  gets.chomp
-    homescreen(User.find_or_create_by(name: input))
+    input = gets.chomp
+    if User.exists?(name: input)
+      homescreen(User.find_by(name: input))
+    else puts "Username not found. Please try again!"
+      login
+    end
   end
 
   def create_new_user
     puts "Enter username: "
     input = gets.chomp
-    homescreen(User.create(name: input))
+    homescreen(User.create(name: input, balance: 10000))
   end
 
   def display_account_info
     line_break
-    puts "Username: #{self.user.name}".colorize(:blue)
+    puts "Username: #{self.user.name}".colorize(:cyan)
     puts "Balance : #{self.user.balance}".colorize(:green)
     homescreen
   end
@@ -81,8 +94,8 @@ class Menu
     until input == "b"
 
       show_one_game(all_g[index])
-
       input = gets.chomp.downcase
+      
       case input
       when "n"
         index += 1
@@ -91,9 +104,7 @@ class Menu
       when "b"
         bet_prompt(all_g[index])
       end
-
     end
-
   end
 
   def bet_prompt(game)
@@ -121,11 +132,8 @@ class Menu
     end
 
     puts "How much do you want to bet?"
-    
     bet_amt = gets.chomp
-
     puts "Confirm your bet of #{bet_amt.colorize(:green)} on #{team_selected}: (Y/N)"
-
     confirmation = gets.chomp.downcase
 
     case confirmation
@@ -146,20 +154,33 @@ class Menu
   end
 
   def display_current_bets(user)
-
   end
 
   def display_all_bets(user)
+  end
 
+  def wrap_center(str)
+    str_new = str.center(59)
+    puts pipe_wrap(str_new)
+  end
+
+  def print_menu(username)
+    line_break
+    wrap_center("Welcome #{user.name}")
+    wrap_center("┌─┐┌─┐┌┬┐┬┌─┐┌┐┌┌─┐")
+    wrap_center("│ │├─┘ │ ││ ││││└─┐")
+    wrap_center("└─┘┴   ┴ ┴└─┘┘└┘└─┘")
+    wrap_center("1. Account Info")
+    wrap_center("2. Upcoming Games")
+    wrap_center("3. Current Bets")
+    wrap_center("4. Bet History")
+    wrap_center("5. EXIT")
+    line_break
   end
 
   def homescreen(user = self.user)
     self.user = user
-    line_break
-    puts "Welcome, #{user.name}".colorize(:blue)
-    puts "Please select an option:\n1. Account Info\n2. Upcoming Games\n3. Current Bets\n4. Bet History\n5. EXIT\n"
-    line_break
-
+    print_menu(user)
     input = gets.chomp.to_i
 
     case input
