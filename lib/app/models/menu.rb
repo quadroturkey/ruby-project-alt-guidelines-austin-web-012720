@@ -38,34 +38,48 @@ class Menu
   end
 
   def display_account_info
+    line_break
     puts "Username: #{self.user.name}".colorize(:blue)
     puts "Balance : #{self.user.balance}".colorize(:green)
     homescreen
   end
 
-  def display_upcoming_games(game_index)
+  def display_upcoming_games#(game_index)
 
-    ap Game.all[game_index]
-    puts "PREVIOUS (p) .......BET (b).......... NEXT (n)".colorize(:red)
+    all_games = Game.all
+    game = all_games[game_index]
 
-    selected = gets.chomp
-    case selected
-    when "n"
-      game_index += 1
-      display_upcoming_games(game_index)
-    when "p"
-      game_index -= 1
-      display_upcoming_games(game_index)
-    when "b"
-      bet_prompt(Game.all[game_index])
-    else
-      puts "will not accept that input"
-      display_upcoming_games(game_index)
-    end
+    until input == "b"
+      line_break
+      puts 
+
+    
+
+
+    # line_break
+    # puts "Team 1               vs          team 2"
+    # puts "home spread     ---------------- away spread"
+    # puts "PREVIOUS (p) .......BET (b).......... NEXT (n)".colorize(:red)
+    # line_break
+
+    # selected = gets.chomp
+    # case selected
+    # when "n"
+    #   game_index += 1
+    #   display_upcoming_games(game_index)
+    # when "p"
+    #   game_index -= 1
+    #   display_upcoming_games(game_index)
+    # when "b"
+    #   bet_prompt(Game.all[game_index])
+    # else
+    #   puts "will not accept that input"
+    #   display_upcoming_games(game_index)
+    # end
   end
 
   def bet_prompt(game)
-    puts "#{game.away} is playing @ #{game.home}"
+    puts "#{game.away} are playing @ #{game.home}"
     if game.h_spread > 0
       puts "The #{game.home} are favored by #{game.h_spread}"
     else
@@ -126,8 +140,9 @@ class Menu
   def homescreen(user = self.user)
     self.user = user
     line_break
-    puts "Welcome, #{user.name}"
+    puts "Welcome, #{user.name}".colorize(:blue)
     puts "Please select an option:\n1. Account Info\n2. Upcoming Games\n3. Current Bets\n4. Bet History\n5. EXIT\n"
+    line_break
 
     input = gets.chomp.to_i
 
