@@ -28,13 +28,17 @@ class Menu
   def login
     puts "Enter your username: "
     input =  gets.chomp
-    homescreen(User.find_or_create_by(name: input))
+    if User.exists?(name: input)
+      homescreen(User.find_by(name: input))
+    else puts "Username not found. Please try again!"
+      login
+    end
   end
 
   def create_new_user
     puts "Enter username: "
     input = gets.chomp
-    homescreen(User.create(name: input))
+    homescreen(User.create(name: input, balance: 10000))
   end
 
   def display_account_info
@@ -181,5 +185,6 @@ class Menu
     star_count =  "-" * 61
     puts star_count.colorize(:yellow)
   end
+
 
 end
