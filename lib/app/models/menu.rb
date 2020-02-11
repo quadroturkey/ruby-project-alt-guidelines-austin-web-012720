@@ -55,7 +55,7 @@ class Menu
     "|".colorize(:yellow)
   end
 
-  def display_upcoming_games#(game_index)
+  def display_upcoming_games
 
     all_games = Game.all
     game_index = 0
