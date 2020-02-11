@@ -62,20 +62,20 @@ class Menu
     nav_input = nil
 
     until nav_input == "b"
-      
+
       t = all_games[game_index]
 
       prev = "PREVIOUS (p)".colorize(:light_red)
       bt = "(b) BET (b)".colorize(:light_green)
       nxt = "(n) NEXT".colorize(:cyan)
 
-      
+
       line_break
       puts spacer(t.home, t.away, "@")
       puts spacer(" #{t.h_spread}", "#{t.a_spread} ", "date/time")
       line_break
       puts "#{prev}             #{bt}                 #{nxt}"
-      
+
 
       nav_input = gets.chomp.downcase
       case nav_input
@@ -178,5 +178,3 @@ class Menu
   end
 
 end
-
-
