@@ -5,7 +5,7 @@ class Bet < ActiveRecord::Base
   after_initialize :collect_from_user, unless: :persisted?
 
   def collect_from_user
-    if(self.bet_amt > 0)
+    if(self.bet_amount > 0)
     self.user.take_funds(self.bet_amount)
     end
   end

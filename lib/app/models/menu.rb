@@ -48,41 +48,48 @@ class Menu
     l = left.to_s
     r = right.to_s
     m = middle.to_s
-    spacers = pipe + l.ljust(24) + m.center(11) + r.rjust(24) + pipe
+    spacers = l.ljust(24) + m.center(11) + r.rjust(24)
+    pipe_wrap(spacers)
   end
 
-  def pipe
-    "|".colorize(:yellow)
+  def pipe_wrap(str)
+    yp = "|".colorize(:yellow)
+    new_str = yp + str + yp
+  end
+
+  def nav_bar
+    prev = "PREVIOUS (p)".colorize(:light_red)
+    bt = "(b) BET (b)".colorize(:light_green)
+    nxt = "(n) NEXT".colorize(:cyan)
+    "#{prev}             #{bt}                 #{nxt}"
+  end
+
+  def show_one_game(game)
+    line_break
+    puts spacer(game.home, game.away, "@")
+    puts spacer(" #{game.h_spread}", "#{game.a_spread} ", "date/time")
+    line_break
+    puts nav_bar
   end
 
   def display_upcoming_games
 
-    all_games = Game.all
-    game_index = 0
-    nav_input = nil
+    all_g = Game.all
+    index = 0
+    input = nil
 
-    until nav_input == "b"
+    until input == "b"
 
-      t = all_games[game_index]
+      show_one_game(all_g[index])
 
-      prev = "PREVIOUS (p)".colorize(:light_red)
-      bt = "(b) BET (b)".colorize(:light_green)
-      nxt = "(n) NEXT".colorize(:cyan)
-
-
-      line_break
-      puts spacer(t.home, t.away, "@")
-      puts spacer(" #{t.h_spread}", "#{t.a_spread} ", "date/time")
-      line_break
-      puts "#{prev}             #{bt}                 #{nxt}"
-
-
-      nav_input = gets.chomp.downcase
-      case nav_input
+      input = gets.chomp.downcase
+      case input
       when "n"
-        game_index += 1
+        index += 1
       when "p"
-        game_index -= 1
+        index -= 1
+      when "b"
+        bet_prompt(all_g[index])
       end
 
     end
@@ -90,7 +97,7 @@ class Menu
   end
 
   def bet_prompt(game)
-    puts "#{game.away} are playing @ #{game.home}"
+    puts "#{game.away} are playing @ the #{game.home}"
     if game.h_spread > 0
       puts "The #{game.home} are favored by #{game.h_spread}"
     else
@@ -117,7 +124,7 @@ class Menu
     
     bet_amt = gets.chomp
 
-    puts "Confirm your bet of #{bet_amt} on #{team_selected}: (Y/N)"
+    puts "Confirm your bet of #{bet_amt.colorize(:green)} on #{team_selected}: (Y/N)"
 
     confirmation = gets.chomp.downcase
 
