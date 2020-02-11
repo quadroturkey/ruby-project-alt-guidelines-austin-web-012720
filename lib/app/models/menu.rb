@@ -52,7 +52,7 @@ class Menu
     until input == "b"
       line_break
       puts
-
+    end
 
 
 

@@ -3,12 +3,10 @@ class User < ActiveRecord::Base
 
     after_initialize :defaults, unless: :persisted?
 
+    attr_accessor :balance
+
     def defaults
       self.balance ||= 10000000
-    end
-
-    def budget-=(amount)
-      self.budget = self.budget -amount
     end
 
     def has_budget(amount)
@@ -17,13 +15,11 @@ class User < ActiveRecord::Base
 
     def take_funds(amount)
       if self.has_budget(amount)
-        self.budget -= (amount)
+        self.balance -= (amount)
       end
     end
 
-    def balance+=(amount)
-      self.budget = self.budget + amount
-    end
+
 
 
 
