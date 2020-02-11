@@ -74,7 +74,6 @@ class Menu
       puts spacer(t.home, t.away, "@")
       puts spacer(" #{t.h_spread}", "#{t.a_spread} ", "date/time")
       line_break
-
       puts "#{prev}             #{bt}                 #{nxt}"
       
 
@@ -85,8 +84,6 @@ class Menu
       when "p"
         game_index -= 1
       end
-
-
 
     end
 
@@ -117,7 +114,7 @@ class Menu
     end
 
     puts "How much do you want to bet?"
-
+    
     bet_amt = gets.chomp
 
     puts "Confirm your bet of #{bet_amt} on #{team_selected}: (Y/N)"
@@ -127,10 +124,10 @@ class Menu
     case confirmation
     when "y"
       Bet.create(
-        user: self.user,
-        game: game,
-        bet_amount: bet_amt,
-        team_selected: team_selected,
+        user: self.user, 
+        game: game, 
+        bet_amount: bet_amt, 
+        team_selected: team_selected, 
         bet_type: "spread"
       )
     when "n"
@@ -140,8 +137,6 @@ class Menu
     end
 
   end
-
-
 
   def display_current_bets(user)
 
