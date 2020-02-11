@@ -204,5 +204,5 @@ class Menu
     star_count =  "-" * 61
     puts star_count.colorize(:yellow)
   end
-
+  
 end
