@@ -1,5 +1,5 @@
 class User < ActiveRecord::Base
-    has_many :bets
+  has_many :bets
 
     def has_budget(amount)
       self.balance > amount
