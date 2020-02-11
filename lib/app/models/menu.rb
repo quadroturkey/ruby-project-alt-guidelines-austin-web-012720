@@ -44,38 +44,52 @@ class Menu
     homescreen
   end
 
+  def spacer(left, right, middle)
+    l = left.to_s
+    r = right.to_s
+    m = middle.to_s
+    spacers = pipe + l.ljust(24) + m.center(11) + r.rjust(24) + pipe
+  end
+
+  def pipe
+    "|".colorize(:yellow)
+  end
+
   def display_upcoming_games#(game_index)
 
     all_games = Game.all
-    game = all_games[game_index]
+    game_index = 0
+    nav_input = nil
 
-    until input == "b"
+    until nav_input == "b"
+      
+      t = all_games[game_index]
+
+      prev = "PREVIOUS (p)".colorize(:light_red)
+      bt = "(b) BET (b)".colorize(:light_green)
+      nxt = "(n) NEXT".colorize(:cyan)
+
+      
       line_break
-      puts
+      puts spacer(t.home, t.away, "@")
+      puts spacer(" #{t.h_spread}", "#{t.a_spread} ", "date/time")
+      line_break
+
+      puts "#{prev}             #{bt}                 #{nxt}"
+      
+
+      nav_input = gets.chomp.downcase
+      case nav_input
+      when "n"
+        game_index += 1
+      when "p"
+        game_index -= 1
+      end
+
+
+
     end
 
-
-
-    # line_break
-    # puts "Team 1               vs          team 2"
-    # puts "home spread     ---------------- away spread"
-    # puts "PREVIOUS (p) .......BET (b).......... NEXT (n)".colorize(:red)
-    # line_break
-
-    # selected = gets.chomp
-    # case selected
-    # when "n"
-    #   game_index += 1
-    #   display_upcoming_games(game_index)
-    # when "p"
-    #   game_index -= 1
-    #   display_upcoming_games(game_index)
-    # when "b"
-    #   bet_prompt(Game.all[game_index])
-    # else
-    #   puts "will not accept that input"
-    #   display_upcoming_games(game_index)
-    # end
   end
 
   def bet_prompt(game)
@@ -150,7 +164,7 @@ class Menu
     when 1
       display_account_info
     when 2
-      display_upcoming_games(0)
+      display_upcoming_games
     when 3
       display_current_bets(user)
     when 4
@@ -164,6 +178,10 @@ class Menu
   end
 
   def line_break
-    puts "******************************************".colorize(:yellow)
+    star_count =  "-" * 61
+    puts star_count.colorize(:yellow)
   end
+
 end
+
+
