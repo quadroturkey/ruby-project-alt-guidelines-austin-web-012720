@@ -1,10 +1,6 @@
 class Menu
   attr_accessor :user
 
-  def run
-    welcome
-  end
-
   def welcome
     puts "Welcome to:"
     puts "
@@ -19,6 +15,7 @@ class Menu
     puts "Do you have an existing account? (Y/N)"
 
     input = gets.chomp
+    
 
     case input.downcase
     when "y" || "Y"
@@ -78,6 +75,7 @@ class Menu
   end
 
   def show_one_game(game)
+    system("cls") || system("clear")
     line_break
     puts spacer(game.home, game.away, "@")
     puts spacer(" #{game.h_spread}", "#{game.a_spread} ", "date/time")
@@ -185,6 +183,7 @@ class Menu
 
     case input
     when 1
+      clear_screan
       display_account_info
     when 2
       display_upcoming_games
@@ -203,6 +202,10 @@ class Menu
   def line_break
     star_count =  "-" * 61
     puts star_count.colorize(:yellow)
+  end
+
+  def clear_screan
+    system("cls") || system("clear")
   end
   
 end
