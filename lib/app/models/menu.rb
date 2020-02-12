@@ -113,7 +113,6 @@ class Menu
         index -= 1
       when "b"
         display_bet_prompts(all_g[index])
-        bet_prompt(all_g[index])
       when "o"
         homescreen
       end
@@ -136,27 +135,30 @@ class Menu
     wrap_center("2. #{game.away}")
     wrap_center("3. BACK")
     line_break
+    bet_team_selection(game)
   end
 
-  def bet_prompt(game)
-
+  def bet_team_selection(game)
     input = gets.chomp.to_i
-
     case input
     when 1
-      team_selected = game.home
+      display_team_selection(game.home)
     when 2
-      team_selected = game.away
+      display_team_selection(game.away)
     when 3
       display_upcoming_games
     end
+  end
 
+  def display_team_selection(team_sel)
     puts "How much do you want to bet?"
     bet_amt = gets.chomp
-    puts "Confirm your bet of #{bet_amt.colorize(:green)} on the #{team_selected}: (Y/N)"
+    puts "Confirm your bet of #{bet_amt.colorize(:green)} on the #{team_sel}: (Y/N)"
     confirmation = gets.chomp.downcase
+  end
 
-    case confirmation
+  def confirm_bet(confirm, bet_amt)
+    case confirm
     when "y"
       Bet.create(
         user: self.user, 
@@ -168,25 +170,23 @@ class Menu
       homescreen(self.user)
     when "n"
       puts "Bet canceled".colorize(:light_red)
-      sleep(2)
+      sleep(1)
       clear_screan
       homescreen
     end
-
   end
+
+  
 
   def display_current_bets(user)
     clear_screan
-
     line_break
     wrap_center("    TEAM SELECTED              BET AMOUNT - TO WIN  ")
     line_break
-
     self.user.bets.map do |b| 
       puts spacer("  #{b.team_selected}", "#{b.bet_amount} - $#{(b.bet_amount*2)}        ","|")
     end
     line_break
-
     homescreen
   end
 
