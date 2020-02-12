@@ -1,7 +1,8 @@
 class Menu
   attr_accessor :user
 
-  def welcome
+  def welcome_banner
+    clear_screan
     puts "Welcome to:"
     puts "
     ██████╗ ██╗ ██████╗     ███╗   ███╗ ██████╗ ███╗   ██╗███████╗██╗   ██╗    ███████╗██████╗  ██████╗ ██████╗ ████████╗███████╗
@@ -12,16 +13,20 @@ class Menu
     ╚═════╝ ╚═╝ ╚═════╝     ╚═╝     ╚═╝ ╚═════╝ ╚═╝  ╚═══╝╚══════╝   ╚═╝       ╚══════╝╚═╝      ╚═════╝ ╚═╝  ╚═╝   ╚═╝   ╚══════╝
                                                                                                                                  
     ".colorize(:light_green)
-    puts "Do you have an existing account? (Y/N)"
+    
+  end
 
+  def welcome
+    welcome_banner
+
+    puts "Do you have an existing account? (Y/N)"
     input = gets.chomp
     
-
     case input.downcase
-    when "y" || "Y"
+    when "y"
       line_break
       login
-    when "n" || "N"
+    when "n"
       line_break
       create_new_user
     else
@@ -34,6 +39,7 @@ class Menu
   def login
     puts "Enter your username: "
     input = gets.chomp
+    clear_screan
     if User.exists?(name: input)
       homescreen(User.find_by(name: input))
     else puts "Username not found. Please try again!"
@@ -67,20 +73,26 @@ class Menu
     new_str = yp + str + yp
   end
 
-  def nav_bar
+  def nav_bar_top
+    options = "OPTIONS (o)".colorize(:light_blue)
+    bt = "(b) BET".colorize(:light_green)
+    "#{options}                                           #{bt}"
+  end
+
+  def nav_bar_bottom
     prev = "PREVIOUS (p)".colorize(:light_red)
-    bt = "(b) BET (b)".colorize(:light_green)
     nxt = "(n) NEXT".colorize(:cyan)
-    "#{prev}             #{bt}                 #{nxt}"
+    "#{prev}                                         #{nxt}"
   end
 
   def show_one_game(game)
-    system("cls") || system("clear")
+    clear_screan
+    puts nav_bar_top
     line_break
     puts spacer(game.away, game.home, "@")
     puts spacer(" #{game.a_spread}", "#{game.h_spread} ", "date/time")
     line_break
-    puts nav_bar
+    puts nav_bar_bottom
   end
 
   def display_upcoming_games
@@ -89,7 +101,7 @@ class Menu
     index = 0
     input = nil
 
-    until input == "b"
+    until input == "b" || input == "o"
 
       show_one_game(all_g[index])
       input = gets.chomp.downcase
@@ -100,7 +112,10 @@ class Menu
       when "p"
         index -= 1
       when "b"
+        display_bet_prompts(all_g[index])
         bet_prompt(all_g[index])
+      when "o"
+        homescreen
       end
     end
   end
@@ -124,8 +139,6 @@ class Menu
   end
 
   def bet_prompt(game)
-    
-    display_bet_prompts(game)
 
     input = gets.chomp.to_i
 
@@ -140,7 +153,7 @@ class Menu
 
     puts "How much do you want to bet?"
     bet_amt = gets.chomp
-    puts "Confirm your bet of #{bet_amt.colorize(:green)} on #{team_selected}: (Y/N)"
+    puts "Confirm your bet of #{bet_amt.colorize(:green)} on the #{team_selected}: (Y/N)"
     confirmation = gets.chomp.downcase
 
     case confirmation
@@ -152,15 +165,29 @@ class Menu
         team_selected: team_selected, 
         bet_type: "spread"
       )
+      homescreen(self.user)
     when "n"
-      puts "Bet canceled"
-      line_break
-      bet_prompt
+      puts "Bet canceled".colorize(:light_red)
+      sleep(2)
+      clear_screan
+      homescreen
     end
 
   end
 
   def display_current_bets(user)
+    clear_screan
+
+    line_break
+    wrap_center("    TEAM SELECTED              BET AMOUNT - TO WIN  ")
+    line_break
+
+    self.user.bets.map do |b| 
+      puts spacer("  #{b.team_selected}", "#{b.bet_amount} - $#{(b.bet_amount*2)}        ","|")
+    end
+    line_break
+
+    homescreen
   end
 
   def display_all_bets(user)
