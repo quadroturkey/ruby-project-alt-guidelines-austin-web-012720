@@ -77,8 +77,8 @@ class Menu
   def show_one_game(game)
     system("cls") || system("clear")
     line_break
-    puts spacer(game.home, game.away, "@")
-    puts spacer(" #{game.h_spread}", "#{game.a_spread} ", "date/time")
+    puts spacer(game.away, game.home, "@")
+    puts spacer(" #{game.a_spread}", "#{game.h_spread} ", "date/time")
     line_break
     puts nav_bar
   end
@@ -105,18 +105,27 @@ class Menu
     end
   end
 
-  def bet_prompt(game)
-    puts "#{game.away} are playing @ the #{game.home}"
+  def display_bet_prompts(game)
+    line_break
+    wrap_center("#{game.away} are playing @ the #{game.home}")
     if game.h_spread > 0
-      puts "The #{game.home} are favored by #{game.h_spread}"
+      wrap_center("The #{game.home} are favored by +#{game.h_spread}")
     else
-      puts "The #{game.away} are favored by #{game.a_spread}"
+      wrap_center("The #{game.away} are favored by +#{game.a_spread}")
     end
 
-    puts "Which team do you want to bet on?"
-    puts "1. #{game.home}".colorize(:bright_red)
-    puts "2. #{game.away}".colorize(:bright_blue)
-    puts "3. BACK"
+    wrap_center("Which team do you want to bet on?")
+      
+    line_break
+    wrap_center("1. #{game.home}")
+    wrap_center("2. #{game.away}")
+    wrap_center("3. BACK")
+    line_break
+  end
+
+  def bet_prompt(game)
+    
+    display_bet_prompts(game)
 
     input = gets.chomp.to_i
 
@@ -192,7 +201,7 @@ class Menu
     when 4
       display_all_bets(user)
     when 5
-      puts "Goodbye"
+      puts "Thanks for the cash fish!".colorize(:light_magenta)
     else
       puts "Invalid Entry."
       homescreen(user)
