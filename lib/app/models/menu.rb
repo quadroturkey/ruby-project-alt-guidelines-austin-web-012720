@@ -142,22 +142,23 @@ class Menu
     input = gets.chomp.to_i
     case input
     when 1
-      display_team_selection(game.home)
+      display_team_selection(game.home, game)
     when 2
-      display_team_selection(game.away)
+      display_team_selection(game.away, game)
     when 3
       display_upcoming_games
     end
   end
 
-  def display_team_selection(team_sel)
+  def display_team_selection(team_sel, game)
     puts "How much do you want to bet?"
     bet_amt = gets.chomp
     puts "Confirm your bet of #{bet_amt.colorize(:green)} on the #{team_sel}: (Y/N)"
     confirmation = gets.chomp.downcase
+    confirm_bet(confirmation, bet_amt, game, team_sel)
   end
 
-  def confirm_bet(confirm, bet_amt)
+  def confirm_bet(confirm, bet_amt, game, team_selected)
     case confirm
     when "y"
       Bet.create(
