@@ -1,11 +1,8 @@
 class Menu
   attr_accessor :user
 
-  def run
-    welcome
-  end
-
-  def welcome
+  def welcome_banner
+    clear_screan
     puts "Welcome to:"
     puts "
     ██████╗ ██╗ ██████╗     ███╗   ███╗ ██████╗ ███╗   ██╗███████╗██╗   ██╗    ███████╗██████╗  ██████╗ ██████╗ ████████╗███████╗
@@ -16,15 +13,20 @@ class Menu
     ╚═════╝ ╚═╝ ╚═════╝     ╚═╝     ╚═╝ ╚═════╝ ╚═╝  ╚═══╝╚══════╝   ╚═╝       ╚══════╝╚═╝      ╚═════╝ ╚═╝  ╚═╝   ╚═╝   ╚══════╝
                                                                                                                                  
     ".colorize(:light_green)
+    
+  end
+
+  def welcome
+    welcome_banner
+
     puts "Do you have an existing account? (Y/N)"
-
     input = gets.chomp
-
+    
     case input.downcase
-    when "y" || "Y"
+    when "y"
       line_break
       login
-    when "n" || "N"
+    when "n"
       line_break
       create_new_user
     else
@@ -37,6 +39,7 @@ class Menu
   def login
     puts "Enter your username: "
     input = gets.chomp
+    clear_screan
     if User.exists?(name: input)
       homescreen(User.find_by(name: input))
     else puts "Username not found. Please try again!"
@@ -70,19 +73,26 @@ class Menu
     new_str = yp + str + yp
   end
 
-  def nav_bar
+  def nav_bar_top
+    options = "OPTIONS (o)".colorize(:light_blue)
+    bt = "(b) BET".colorize(:light_green)
+    "#{options}                                           #{bt}"
+  end
+
+  def nav_bar_bottom
     prev = "PREVIOUS (p)".colorize(:light_red)
-    bt = "(b) BET (b)".colorize(:light_green)
     nxt = "(n) NEXT".colorize(:cyan)
-    "#{prev}             #{bt}                 #{nxt}"
+    "#{prev}                                         #{nxt}"
   end
 
   def show_one_game(game)
+    clear_screan
+    puts nav_bar_top
     line_break
-    puts spacer(game.home, game.away, "@")
-    puts spacer(" #{game.h_spread}", "#{game.a_spread} ", "date/time")
+    puts spacer(game.away, game.home, "@")
+    puts spacer(" #{game.a_spread}", "#{game.h_spread} ", "date/time")
     line_break
-    puts nav_bar
+    puts nav_bar_bottom
   end
 
   def display_upcoming_games
@@ -91,7 +101,7 @@ class Menu
     index = 0
     input = nil
 
-    until input == "b"
+    until input == "b" || input == "o"
 
       show_one_game(all_g[index])
       input = gets.chomp.downcase
@@ -102,41 +112,53 @@ class Menu
       when "p"
         index -= 1
       when "b"
-        bet_prompt(all_g[index])
+        display_bet_prompts(all_g[index])
+      when "o"
+        homescreen
       end
     end
   end
 
-  def bet_prompt(game)
-    puts "#{game.away} are playing @ the #{game.home}"
+  def display_bet_prompts(game)
+    line_break
+    wrap_center("#{game.away} are playing @ the #{game.home}")
     if game.h_spread > 0
-      puts "The #{game.home} are favored by #{game.h_spread}"
+      wrap_center("The #{game.home} are favored by +#{game.h_spread}")
     else
-      puts "The #{game.away} are favored by #{game.a_spread}"
+      wrap_center("The #{game.away} are favored by +#{game.a_spread}")
     end
 
-    puts "Which team do you want to bet on?"
-    puts "1. #{game.home}".colorize(:bright_red)
-    puts "2. #{game.away}".colorize(:bright_blue)
-    puts "3. BACK"
+    wrap_center("Which team do you want to bet on?")
+      
+    line_break
+    wrap_center("1. #{game.home}")
+    wrap_center("2. #{game.away}")
+    wrap_center("3. BACK")
+    line_break
+    bet_team_selection(game)
+  end
 
+  def bet_team_selection(game)
     input = gets.chomp.to_i
-
     case input
     when 1
-      team_selected = game.home
+      display_team_selection(game.home)
     when 2
-      team_selected = game.away
+      display_team_selection(game.away)
     when 3
       display_upcoming_games
     end
+  end
 
+  def display_team_selection(team_sel)
     puts "How much do you want to bet?"
     bet_amt = gets.chomp
-    puts "Confirm your bet of #{bet_amt.colorize(:green)} on #{team_selected}: (Y/N)"
+    puts "Confirm your bet of #{bet_amt.colorize(:green)} on the #{team_sel}: (Y/N)"
     confirmation = gets.chomp.downcase
+  end
 
-    case confirmation
+  def confirm_bet(confirm, bet_amt)
+    case confirm
     when "y"
       Bet.create(
         user: self.user, 
@@ -145,15 +167,27 @@ class Menu
         team_selected: team_selected, 
         bet_type: "spread"
       )
+      homescreen(self.user)
     when "n"
-      puts "Bet canceled"
-      line_break
-      bet_prompt
+      puts "Bet canceled".colorize(:light_red)
+      sleep(1)
+      clear_screan
+      homescreen
     end
-
   end
 
+  
+
   def display_current_bets(user)
+    clear_screan
+    line_break
+    wrap_center("    TEAM SELECTED              BET AMOUNT - TO WIN  ")
+    line_break
+    self.user.bets.map do |b| 
+      puts spacer("  #{b.team_selected}", "#{b.bet_amount} - $#{(b.bet_amount*2)}        ","|")
+    end
+    line_break
+    homescreen
   end
 
   def display_all_bets(user)
@@ -185,6 +219,7 @@ class Menu
 
     case input
     when 1
+      clear_screan
       display_account_info
     when 2
       display_upcoming_games
@@ -193,7 +228,7 @@ class Menu
     when 4
       display_all_bets(user)
     when 5
-      puts "Goodbye"
+      puts "Thanks for the cash fish!".colorize(:light_magenta)
     else
       puts "Invalid Entry."
       homescreen(user)
@@ -203,6 +238,10 @@ class Menu
   def line_break
     star_count =  "-" * 61
     puts star_count.colorize(:yellow)
+  end
+
+  def clear_screan
+    system("cls") || system("clear")
   end
   
 end
