@@ -96,16 +96,12 @@ class Menu
   end
 
   def display_upcoming_games
-
     all_g = Game.all
     index = 0
     input = nil
-
     until input == "b" || input == "o"
-
       show_one_game(all_g[index])
-      input = gets.chomp.downcase
-      
+      input = gets.chomp.downcase 
       case input
       when "n"
         index += 1
@@ -127,9 +123,7 @@ class Menu
     else
       wrap_center("The #{game.away} are favored by +#{game.a_spread}")
     end
-
     wrap_center("Which team do you want to bet on?")
-      
     line_break
     wrap_center("1. #{game.home}")
     wrap_center("2. #{game.away}")
@@ -150,12 +144,28 @@ class Menu
     end
   end
 
+  def bet_valid?(bet_amount)
+    if bet_amount =~ /^-?[0-9]+$/
+      true
+    else
+      false
+    end
+  end
+
   def display_team_selection(team_sel, game)
     puts "How much do you want to bet?"
     bet_amt = gets.chomp
-    puts "Confirm your bet of #{bet_amt.colorize(:green)} on the #{team_sel}: (Y/N)"
-    confirmation = gets.chomp.downcase
-    confirm_bet(confirmation, bet_amt, game, team_sel)
+    if bet_valid?(bet_amt)
+      puts "Confirm your bet of #{bet_amt.colorize(:green)} on the #{team_sel}: (Y/N)"
+      confirmation = gets.chomp.downcase
+      confirm_bet(confirmation, bet_amt, game, team_sel)
+    else
+      puts "Invalid input".colorize(:light_red)
+      sleep (1)
+      clear_screan
+      display_bet_prompts(game)
+      display_team_selection(team_sel, game)
+    end
   end
 
   def confirm_bet(confirm, bet_amt, game, team_selected)
@@ -169,16 +179,14 @@ class Menu
         bet_type: "spread"
       )
       homescreen(self.user)
-    when "n"
+    else
       puts "Bet canceled".colorize(:light_red)
       sleep(1)
       clear_screan
       homescreen
     end
   end
-
   
-
   def display_current_bets(user)
     clear_screan
     line_break
