@@ -34,4 +34,13 @@ class Game < ActiveRecord::Base
     self.update(start_time: time)
   end
 
+  def self.create_from_api
+    response = Unirest.get "https://sportspage-feeds.p.rapidapi.com/games",
+  headers:{
+    "X-RapidAPI-Host" => "sportspage-feeds.p.rapidapi.com",
+    "X-RapidAPI-Key" => "1d54e391b9msh2ac664a56fed0d8p1d7913jsn7d463e8a8620"
+  }
+  
+  end
+
 end
