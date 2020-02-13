@@ -8,6 +8,7 @@ class Bet < ActiveRecord::Base
     if(self.bet_amount > 0) && self.user.has_budget(self.bet_amount)
       self.user.debit_balance(self.bet_amount)
     end
+    self.update(status: "in progress")
   end
 
   def cancel
@@ -30,9 +31,14 @@ class Bet < ActiveRecord::Base
   end
 
   def self.payout
-    if self.game.status == "final"
-      if self.game.winner == self.team_selected
-        self.user.credit_balance(self.bet_amount * 2)
+    self.all.each do |bet|
+      if bet.game.status == "final" && bet.status == "in progress"
+        if bet.game.winner == bet.team_selected
+          bet.user.credit_balance(bet.bet_amount * 2)
+          bet.update(status: "Won")
+        else
+          bet.update(status: "Lost")
+        end
       end
     end
   end
