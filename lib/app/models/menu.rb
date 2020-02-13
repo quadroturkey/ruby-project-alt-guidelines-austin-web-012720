@@ -11,9 +11,8 @@ class Menu
     ██╔══██╗██║██║   ██║    ██║╚██╔╝██║██║   ██║██║╚██╗██║██╔══╝    ╚██╔╝      ╚════██║██╔═══╝ ██║   ██║██╔══██╗   ██║   ╚════██║
     ██████╔╝██║╚██████╔╝    ██║ ╚═╝ ██║╚██████╔╝██║ ╚████║███████╗   ██║       ███████║██║     ╚██████╔╝██║  ██║   ██║   ███████║
     ╚═════╝ ╚═╝ ╚═════╝     ╚═╝     ╚═╝ ╚═════╝ ╚═╝  ╚═══╝╚══════╝   ╚═╝       ╚══════╝╚═╝      ╚═════╝ ╚═╝  ╚═╝   ╚═╝   ╚══════╝
-                                                                                                                                 
+
     ".colorize(:light_green)
-    
   end
 
   def welcome
@@ -21,7 +20,7 @@ class Menu
 
     puts "Do you have an existing account? (Y/N)"
     input = gets.chomp
-    
+
     case input.downcase
     when "y"
       line_break
@@ -101,7 +100,7 @@ class Menu
     input = nil
     until input == "b" || input == "o"
       show_one_game(all_g[index])
-      input = gets.chomp.downcase 
+      input = gets.chomp.downcase
       case input
       when "n"
         index += 1
@@ -172,10 +171,10 @@ class Menu
     case confirm
     when "y"
       Bet.create(
-        user: self.user, 
-        game: game, 
-        bet_amount: bet_amt, 
-        team_selected: team_selected, 
+        user: self.user,
+        game: game,
+        bet_amount: bet_amt,
+        team_selected: team_selected,
         bet_type: "spread"
       )
       homescreen(self.user)
@@ -186,13 +185,13 @@ class Menu
       homescreen
     end
   end
-  
+
   def display_current_bets(user)
     clear_screan
     line_break
     wrap_center("    TEAM SELECTED              BET AMOUNT - TO WIN  ")
     line_break
-    self.user.bets.map do |b| 
+    self.user.bets.map do |b|
       puts spacer("  #{b.team_selected}", "#{b.bet_amount} - $#{(b.bet_amount*2)}        ","|")
     end
     line_break
@@ -252,5 +251,5 @@ class Menu
   def clear_screan
     system("cls") || system("clear")
   end
-  
+
 end
