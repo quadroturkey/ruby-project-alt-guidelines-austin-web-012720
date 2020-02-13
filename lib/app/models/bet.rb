@@ -34,9 +34,9 @@ class Bet < ActiveRecord::Base
       if self.game.winner == self.team_selected
         self.user.credit_balance(self.bet_amount * 2)
       end
+
     end
   end
-
 
 
   # STILL NEED

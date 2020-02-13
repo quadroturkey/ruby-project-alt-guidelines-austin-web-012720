@@ -31,14 +31,16 @@
 # # )
 # i = 0
 # games.count.times do
-#   if games[i].dig("odds") != nil
-#     Game.create(
-#       home: games[i].dig("teams", "home", "team"),
-#       away: games[i].dig("teams", "away", "team"),
-#       h_spread: games[i].dig("odds")[0].dig("spread", "open",  "home"),
-#       a_spread: games[i].dig("odds")[0].dig("spread", "open",  "away"),
-#       start_time: games[i].dig("schedule", "date")
-#   )
-#   end
+  if games[i].dig("odds") != nil
+    Game.create(
+      home: games[i].dig("teams", "home", "team"),
+      away: games[i].dig("teams", "away", "team"),
+      h_spread: games[i].dig("odds")[0].dig("spread", "open",  "home"),
+      a_spread: games[i].dig("odds")[0].dig("spread", "open",  "away"),
+      start_time: games[i].dig("schedule", "date")
+  )
+end
+
+
 #   i += 1
 # end
