@@ -2,12 +2,7 @@ class Game < ActiveRecord::Base
   has_many :bets
 
   def started
-    if self.start_time != nil
-      Time.now.to_datetime < self.start_time
-    else
-      puts "game has no start_time"
-      false
-    end
+    self.start_time.past?
   end
 
   def winner
@@ -40,7 +35,7 @@ class Game < ActiveRecord::Base
     "X-RapidAPI-Host" => "sportspage-feeds.p.rapidapi.com",
     "X-RapidAPI-Key" => "1d54e391b9msh2ac664a56fed0d8p1d7913jsn7d463e8a8620"
   }
-  
+
   end
 
 end

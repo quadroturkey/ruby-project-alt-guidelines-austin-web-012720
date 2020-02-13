@@ -5,8 +5,8 @@ class Bet < ActiveRecord::Base
   after_initialize :collect_from_user, unless: :persisted?
 
   def collect_from_user
-    if(self.bet_amount > 0 && self.user.has_budget(self.bet_amount))
-    self.user.debit_balance(self.bet_amount)
+    if self.user.has_budget(self.bet_amount)
+      self.user.debit_balance(self.bet_amount)
     end
   end
 
@@ -28,6 +28,16 @@ class Bet < ActiveRecord::Base
   def change_team(team)
     self.update(team_selected: team)
   end
+
+  def self.payout
+    if self.game.status == "final"
+      if self.game.winner == self.team_selected
+        self.user.credit_balance(self.bet_amount * 2)
+      end
+    end
+  end
+
+
 
   # STILL NEED
   # a class method to update and make payouts after game happens
