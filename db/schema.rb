@@ -10,14 +10,15 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 4) do
+ActiveRecord::Schema.define(version: 3) do
 
   create_table "bets", force: :cascade do |t|
     t.integer "user_id"
     t.integer "game_id"
     t.string "bet_type"
-    t.float "bet_amount"
+    t.integer "bet_amount"
     t.string "team_selected"
+    t.string "status"
   end
 
   create_table "games", force: :cascade do |t|
@@ -28,11 +29,13 @@ ActiveRecord::Schema.define(version: 4) do
     t.float "h_spread"
     t.float "a_spread"
     t.datetime "start_time"
+    t.integer "sports_page_id"
+    t.string "status"
   end
 
   create_table "users", force: :cascade do |t|
     t.string "name"
-    t.float "balance"
+    t.integer "balance"
   end
 
 end

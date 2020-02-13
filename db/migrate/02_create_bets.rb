@@ -6,6 +6,7 @@ class CreateBets < ActiveRecord::Migration[4.2]
             t.string :bet_type
             t.integer :bet_amount
             t.string :team_selected
+            t.string :status
         end
     end
 end
