@@ -29,6 +29,16 @@ class Bet < ActiveRecord::Base
     self.update(team_selected: team)
   end
 
+  def self.payout
+    if self.game.status == "final"
+      if self.game.winner == self.team_selected
+        self.user.credit_balance(self.bet_amount * 2)
+      end
+    end
+  end
+
+
+
   # STILL NEED
   # a class method to update and make payouts after game happens
   #
