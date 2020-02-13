@@ -145,7 +145,7 @@ class Menu
   end
 
   def bet_valid?(bet_amount)
-    if bet_amount =~ /^-?[0-9]+$/
+    if bet_amount =~ /^-?[0-9]+$/ && bet_amount.to_i <= self.user.balance
       true
     else
       false
