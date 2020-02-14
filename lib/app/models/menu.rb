@@ -201,7 +201,9 @@ class Menu
     line_break
     wrap_center("    TEAM SELECTED              BET AMOUNT - TO WIN  ")
     line_break
-    self.user.bets.map do |b|
+    self.user.bets.select do |b|
+      b.status == "in progress"
+    end.map do |b|
       puts spacer("  #{b.team_selected}", "#{b.bet_amount} - $#{(b.bet_amount*2)}        ","|")
     end
     line_break

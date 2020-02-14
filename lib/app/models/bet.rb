@@ -31,6 +31,7 @@ class Bet < ActiveRecord::Base
   end
 
   def self.payout
+    Game.update_from_api
     self.all.each do |bet|
       if bet.game.status == "final" && bet.status == "in progress"
         if bet.game.winner == bet.team_selected

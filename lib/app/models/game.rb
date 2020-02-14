@@ -30,34 +30,39 @@ class Game < ActiveRecord::Base
   end
 
   def self.update_from_api
-    response = Unirest.get "https://sportspage-feeds.p.rapidapi.com/games?status=final",
+    response = Unirest.get "https://sportspage-feeds.p.rapidapi.com/games",
     headers:{
       "X-RapidAPI-Host" => "sportspage-feeds.p.rapidapi.com",
-      "X-RapidAPI-Key" => "1d54e391b9msh2ac664a56fed0d8p1d7913jsn7d463e8a8620"
+      "X-RapidAPI-Key" => "38b0c02487msh5a80be578fae7b6p10eeeajsnc8497830dbd2"
     }
     games = response.body.dig("results")
-
-
     i = 0
     until i == games.count
-      Game.all.find_by(sports_page_id: games[i].dig("gameId")).update(
-        h_score: games[i].dig("scoreboard", "score", "home"),
-        a_score: games[i].dig("scoreboard", "score", "away"),
-        status: games[i].dig("status")
-      )
+      if games[i].dig("odds") != nil
+        Game.all.find_or_create_by(sports_page_id: games[i].dig("gameId")).update(
+          home: games[i].dig("teams", "home", "team"),
+          away: games[i].dig("teams", "away", "team"),
+          h_spread: games[i].dig("odds")[0].dig("spread", "open",  "home"),
+          a_spread: games[i].dig("odds")[0].dig("spread", "open",  "away"),
+          start_time: games[i].dig("schedule", "date"),
+          sports_page_id: games[i].dig("gameId"),
+          status: games[i].dig("status")
+        )
+      end
       i+=1
       puts "updated"
     end
-    
 
   end
+
+
 
   def winner
     if a_score > h_score
       away
     else
       home
-    end
+    end 
   end
 
 
