@@ -30,11 +30,36 @@ class Game < ActiveRecord::Base
   end
 
   def self.update_from_api
-    response = Unirest.get "https://sportspage-feeds.p.rapidapi.com/games",
-  headers:{
-    "X-RapidAPI-Host" => "sportspage-feeds.p.rapidapi.com",
-    "X-RapidAPI-Key" => "1d54e391b9msh2ac664a56fed0d8p1d7913jsn7d463e8a8620"
-  }
+    response = Unirest.get "https://sportspage-feeds.p.rapidapi.com/games?status=final",
+    headers:{
+      "X-RapidAPI-Host" => "sportspage-feeds.p.rapidapi.com",
+      "X-RapidAPI-Key" => "1d54e391b9msh2ac664a56fed0d8p1d7913jsn7d463e8a8620"
+    }
+    games = response.body.dig("results")
+
+
+    i = 0
+    until i == games.count
+      Game.all.find_by(sports_page_id: games[i].dig("gameId")).update(
+        h_score: games[i].dig("scoreboard", "score", "home"),
+        a_score: games[i].dig("scoreboard", "score", "away"),
+        status: games[i].dig("status")
+      )
+      i+=1
+      puts "updated"
+    end
+
+
   end
+
+  def winner
+    if a_score > h_score
+      away
+    else
+      home
+    end
+  end
+
+
 
 end

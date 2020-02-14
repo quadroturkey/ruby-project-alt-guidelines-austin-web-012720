@@ -16,6 +16,7 @@ class Menu
   end
 
   def welcome
+    Bet.payout
     welcome_banner
 
     puts "Do you have an existing account? (Y/N)"
@@ -89,16 +90,17 @@ class Menu
     puts nav_bar_top
     line_break
     puts spacer(game.away, game.home, "@")
-    puts spacer(" #{game.a_spread}", "#{game.h_spread} ", "date/time")
+    puts spacer(" #{game.a_spread}", "#{game.h_spread} ", "#{game.start_time.strftime("%d%b %I:%M")}")
     line_break
     puts nav_bar_bottom
   end
 
   def display_upcoming_games
-    all_g = Game.all
+    all_g = Game.all.select { |game| game.status == "scheduled"}
     index = 0
     input = nil
     until input == "b" || input == "o"
+      
       show_one_game(all_g[index])
       input = gets.chomp.downcase
       case input
@@ -112,6 +114,14 @@ class Menu
         homescreen
       end
     end
+  end
+
+  def display_bet_history(user)
+    past_bets = self.user.bets.select { |bet| bet.status != "in progress"}
+    line_break
+    past_bets.each { |bet| puts spacer("  #{bet.team_selected}", "#{bet.bet_amount} - #{bet.status}", "|")}
+    line_break
+    homescreen
   end
 
   def display_bet_prompts(game)
@@ -144,7 +154,7 @@ class Menu
   end
 
   def bet_valid?(bet_amount)
-    if bet_amount =~ /^-?[0-9]+$/ && bet_amount.to_i <= self.user.balance
+    if bet_amount =~ /^-?[0-9]+$/ && bet_amount.to_i <= self.user.balance && bet_amount.to_i > 0
       true
     else
       false
@@ -198,9 +208,6 @@ class Menu
     homescreen
   end
 
-  def display_all_bets(user)
-  end
-
   def wrap_center(str)
     str_new = str.center(59)
     puts pipe_wrap(str_new)
@@ -234,7 +241,7 @@ class Menu
     when 3
       display_current_bets(user)
     when 4
-      display_all_bets(user)
+      display_bet_history(user)
     when 5
       puts "Thanks for the cash fish!".colorize(:light_magenta)
     else

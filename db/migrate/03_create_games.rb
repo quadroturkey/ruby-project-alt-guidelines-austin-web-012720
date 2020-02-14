@@ -8,6 +8,8 @@ class CreateGames < ActiveRecord::Migration[4.2]
       t.float :h_spread
       t.float :a_spread
       t.datetime :start_time
+      t.integer :sports_page_id
+      t.string :status
     end
   end
 end
